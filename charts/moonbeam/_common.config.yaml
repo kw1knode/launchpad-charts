@@ -1,0 +1,8 @@
+dynamicComponents: false
+
+components:
+  - moonbeam
+
+componentLayering:
+  moonbeam:
+    - moonbeamDefaults
