@@ -34,6 +34,9 @@ rootstockDefaults:
     digest: ""
 
   config:
+    # -- Number of replicas to deploy
+    replicaCount: 1
+    # -- RSKJ ports configuration
     rpc:
       # -- Enable JSON-RPC HTTP server
       enabled: true
@@ -342,6 +345,7 @@ rootstockDefaults:
     spec:
       # -- Required for StatefulSets
       serviceName: '{{ include "common.metadata.fullname" $ }}-{{ .componentName }}-headless'
+      replicas: '{{ $replicaCount | default 1 }} @needs(.Self.config.replicaCount as replicaCount)'
       selector:
         matchLabels:
           app.kubernetes.io/component: '{{ .componentName }}'

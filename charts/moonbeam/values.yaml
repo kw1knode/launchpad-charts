@@ -20,7 +20,6 @@ moonbeam:
   __enabled: true
   workload:
     __enabled: true
-    replicaCount: 1
 
 moonbeamDefaults:
   # -- Image configuration for moonbeam
@@ -36,6 +35,8 @@ moonbeamDefaults:
     digest: ""
 
   config:
+    replicaCount: 1
+
     # -- Enable support for metrics
     metrics:
       enabled: true
@@ -315,7 +316,7 @@ moonbeamDefaults:
     spec:
       # -- Required for StatefulSets
       serviceName: '{{ include "common.metadata.fullname" $ }}-{{ .componentName }}-headless'
-      replicas: '{{ $replicaCount | default 1 }} @needs(.Self.workload.replicaCount as replicaCount)'
+      replicas: '{{ $replicaCount | default 1 }} @needs(.Self.config.replicaCount as replicaCount)'
       selector:
         matchLabels:
           app.kubernetes.io/component: '{{ .componentName }}'
