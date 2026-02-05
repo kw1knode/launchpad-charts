@@ -72,6 +72,9 @@ avalanche:
   # -- Extra labels to attach to the Pod for matching against
   extraLabels: {}
 
+  # -- Additional init containers to add to the pod
+  extraInitContainers: []
+
   # -- [PersistentVolumeClaimSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#persistentvolumeclaimspec-v1-core) for storage
   volumeClaimSpec:
     accessModes: ["ReadWriteOnce"]
@@ -180,5 +183,3 @@ configTemplate: |
     metrics-enabled = "true"
     pruning-enabled = "false"
     state-sync-enabled = "false"
-
-
