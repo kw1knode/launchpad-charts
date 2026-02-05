@@ -35,6 +35,28 @@ grafana:
   dashboardsConfigMapLabel: grafana_dashboard
   # -- Must match `sidecar.dashboards.labelValue` value for the [Grafana chart](https://github.com/grafana/helm-charts/tree/main/charts/grafana#grafana-helm-chart)
   dashboardsConfigMapLabelValue: "1"
+  # -- Create GrafanaDashboard CRDs via Grafana Operator from files in `dashboards/` (references the dashboards ConfigMap)
+  operatorDashboards:
+    enabled: false
+    # -- Optional target namespace for the GrafanaDashboard CRDs (defaults to release namespace)
+    namespace: ""
+    # -- Extra labels and annotations on the GrafanaDashboard resources
+    labels: {}
+    annotations: {}
+    # -- Selector to match Grafana instances managed by the operator
+    instanceSelector:
+      matchLabels: {}
+    # -- Allow matching Grafana instances outside current namespace
+    allowCrossNamespaceImport: false
+    # -- Optional folder metadata
+    folder: ""
+    folderUID: ""
+    uid: ""
+    # -- Operator sync behavior
+    resyncPeriod: ""
+    suspend: false
+    # -- Additional spec fields to merge into GrafanaDashboard.spec
+    extraSpec: {}
 
 # -- Value defaults that apply to both indexer-agent and indexer-service
 indexerDefaults:
@@ -96,6 +118,13 @@ indexerDefaults:
       chain_id: "valid_blockchain_chain_id"
       # find TAPVerifier address at https://github.com/semiotic-ai/timeline-aggregation-protocol-contracts/blob/main/addresses.json
       receipts_verifier_address: "valid_blockchain_receipts_verifier_address"
+      # -- Verifier Address v2 (Horizon)
+      # receipts_verifier_address_v2: 0x382863e7B662027117449bd2c49285582bbBd21B
+      # -- Subgraph service address (Horizon)
+      # subgraph_service_address: 0xc24A3dAC5d06d771f657A48B20cE1a671B78f26b
+    # -- Toggle to enable Horizon
+    horizon:
+      enabled: false
     tap.rav_request:
       trigger_value_divisor: 100
 
@@ -112,7 +141,7 @@ indexerAgent:
   image:
     repository: ghcr.io/graphprotocol/indexer-agent
     pullPolicy: IfNotPresent
-    tag: "v0.22.0"
+    tag: "v0.25.5"
 
   # -- Config to be supplied as CLI arguments, specified using YAML keys to allow overriding
   config:
@@ -126,14 +155,16 @@ indexerAgent:
     # public-indexer-url: null
     # # -- (required) A command separated list of graph-node Node IDs to assign subgraphs to
     # index-node-ids: null
-    # # -- (required) The gateway collect-receipts endpoint for getting vouchers
-    # collect-receipts-endpoint: null
+    # # -- (required) The gateway endpoint for getting vouchers
+    # gateway-endpoint: null
     # # -- (required) Base58 deployment hash (Qm...) for the Graph Network Subgraph
     # network-subgraph-deployment: null
     # # -- (required) Contract address of ERC20 used for DAI variable in cost models
     # dai-contract: null
     # # -- (optional) Query endpoint for syncing status of EBO and its contract state.
     # epoch-subgraph-endpoint: null
+    # -- Setting for automated initial provision for Horizon migration
+    max-provision-initial-size: 100000
 
   secretEnv: {}
     # -- We recommend that you set the following environment variables in the indexer-agent secret
@@ -204,7 +235,7 @@ indexerService:
   image:
     repository: ghcr.io/graphprotocol/indexer-service-rs
     pullPolicy: IfNotPresent
-    tag: "v1.4.1"
+    tag: "v1.8.1"
 
   # -- Entrypoint command to run
   command: /usr/local/bin/indexer-service-rs
@@ -286,7 +317,7 @@ indexerTapAgent:
   image:
     repository: ghcr.io/graphprotocol/indexer-tap-agent
     pullPolicy: IfNotPresent
-    tag: "v1.8.0"
+    tag: "v1.12.4"
 
   # -- Entrypoint command to run
   command: /usr/local/bin/indexer-tap-agent

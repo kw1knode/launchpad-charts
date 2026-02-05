@@ -73,10 +73,13 @@ nitro:
   config:
     # -- Chain ID, 42161 for Arbitrum One
     chain: 42161
+    # -- enable a configmap mount for a chain-info.json file, useful for L3 Orbit chains
+    chainInfo: false
+    chainInfoJson: ""
     # -- RPC URL to L1 chain (ethereum)
-    parentChainUrl: "CHANGE_ME_RPC_URL"
+    parentChainUrl: null
     # -- Beacon URL to L1 chain (ethereum)
-    parentChainBeaconUrl: "CHANGE_ME_BEACON_URL"
+    parentChainBeaconUrl: null
     # -- RPC Url to Arbitrum Classic Archive node if serving classic blocks
     classicUrl: null
     # -- RPC config parameters
@@ -99,6 +102,7 @@ nitro:
     # -- Enabled default arguments on the chart
     defaultArgs:
       - "--execution.caching.archive"
+      - "--execution.rpc.log-history=0"
 
     # -- Additional CLI arguments to pass to `nitro`
     extraArgs: []
@@ -142,9 +146,9 @@ nitro:
   # -- Pod-wide security context
   podSecurityContext:
     runAsNonRoot: true
-    runAsUser: 101337
-    runAsGroup: 101337
-    fsGroup: 101337
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
 
   service:
     topologyAwareRouting:
