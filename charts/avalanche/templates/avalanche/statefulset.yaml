@@ -110,12 +110,15 @@ spec:
             - name: storage
               mountPath: "/storage"
       {{- end }}
+      {{- with $values.extraInitContainers }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ $componentName }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false # avalanche needs to write to /avalanche
+            readOnlyRootFilesystem: false # avalanche needs to write to /avalanche
             capabilities:
               drop:
                 - ALL
